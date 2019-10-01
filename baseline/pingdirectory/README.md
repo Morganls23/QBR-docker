@@ -1,18 +1,46 @@
 # Purpose
-This server profile aims at providing a richer featured PingDirectory configuration that can them be used with PingFederate and PingDataSync
+This repository serves as an example of how configuration can be stored and passed into a PingDirectory container for runtime customization based on a common image
 
-## config
-This directory contains various config batch fragments that are assembled and applied together to set the instance up
+## Top level
+env_vars: environment variable
+
+## dsconfig
+configuration batches organized in the order in which they should be applied, bearing the .dsconfig extension
+For example:
+  - 01-first-batch.dsconfig
+  - 02-second-batch.dsconfig
 
 ## data
-This directory contains data to get a sample data set ready as soon as the container is up and running
+LDIF files organized by back-end, bearing the .ldif extension.  The format that should be used for 
+naming these files is:
+
+   `NN-{back-end name}-{description}.ldif`
+
+The default back-end for PingDirectory is named userRoot, so a good place to start would be for example:
+ - **00-userRoot-dit.ldif** - Contains the entries used to create the skeleton Directory Information Tree (dit)
+ - **10-userRoot-users.ldif** - Contains the user entries
+ - **20-userRoot-groups.ldif** - Contains the group entries
 
 ## extensions
-This directory could contain extensions to apply but currently does not
+Server SDK extension files, bearing the .zip extension.
+Extensions will be installed the first time the container start in no guaranteed order.
 
 ## hooks
-This directory contains shell script example that are executed when the container comes up
+In this diectory, you can place custom scripts that will be executed at specific times during the container startup sequence.
 
 ## instance
-This directory may be used to apply any other file directly to the instance.
-See [the basic server profile](https://github.com/pingidentity/server-profile-pingdirectory-basic) for details
+In this directory, you can place any file you would like, following the normal layout of the Ping Identity product that the server-profile is intended for.
+
+For example, for PingDirectory:
+  - to apply custom schema
+    - instance/config/schema/77-microsoft.ldif
+    - instance/config/schema/99-custom.ldif
+  - to deploy your certificates
+    - instance/config/keystore
+    - instance/config/keystore.pin
+    - instance/config/truststore
+  - to deploy custom velocity templates and supporting files
+    - instance/velocity/templates/single-page-app.vm
+    - instance/velocitystatics/single-page-app.js
+    - instance/velocity/statics/single-page-app.png
+
